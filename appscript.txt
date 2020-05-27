@@ -1,0 +1,77 @@
+function getData(){
+  var ss=SpreadsheetApp.getActiveSpreadsheet();
+  var sheet=ss.getSheetByName('sheet1');
+  var data = sheet.getDataRange().getValues();
+  Logger.log(data.length);
+  var dataToImport = {};
+  var qns = {};var stored=[];var count=0;var stored1=[];
+   for(var iii = 2; iii < data.length; iii++) {
+  
+     var title1=data[iii-1][0];var title2=data[iii][0];
+     stored.push(title1);
+   
+     if(iii == data.length-1){ stored.push(title2);}
+   
+     if(title1 != title2){stored1.push(title1);count+=1;}
+     }
+   
+    
+   var title11=data[data.length-1][0];var title21=data[2][0];
+      if(title11 != title21){stored1.push(title11);}
+      if(count == 0){stored1.push(title2);}
+      Logger.log(stored1);
+  var limitl=-1;
+  var co=stored1.lastIndexOf(title11);
+   Logger.log(co);
+  for(var ii =0; ii < co+1 ;ii++) {
+    dataToImport = {};
+    var title=stored1[ii];
+  //  var title=data[ii][0];
+    var limit=stored.lastIndexOf(title);  dataToImport = {};
+  for(var i = limitl+2; i <=limit+1; i++) {
+    
+    
+     dataToImport = {};
+    var qn =data[i][2];
+    var ln=data[i][1];
+  
+      dataToImport[qn] = { 
+      ans:data[i][7],
+      op1:data[i][3],
+     op2:data[i][4],
+     op3:data[i][5],
+      op4:data[i][6],
+       
+      
+   
+ 
+    
+    }; 
+    qns[ln]={dataToImport};
+             
+ 
+     // updateData(title,dataToImport);
+     updateData1(title,ln,dataToImport);
+  }var limitl=stored.lastIndexOf(title);
+   Logger.log(limit+1);
+    
+  Logger.log(dataToImport);
+
+  }
+
+}
+
+
+
+function updateData(title,ln,dataToImport) {
+  var firebaseUrl = "https://chatappdemo-a6afd.firebaseio.com/";
+  var secret = "KdaI2c8J5UTCouRNZ0pZZjNbub4qumnskj6CzkBu";
+  var base = FirebaseApp.getDatabaseByUrl(firebaseUrl, secret);
+  base.setData(title,dataToImport);
+}
+function updateData1(title,ln,dataToImport) {
+  var firebaseUrl = "https://chatappdemo-a6afd.firebaseio.com/";
+  var secret = "KdaI2c8J5UTCouRNZ0pZZjNbub4qumnskj6CzkBu";
+  var base = FirebaseApp.getDatabaseByUrl(firebaseUrl, secret);
+  base.updateData(title+"/"+ln,dataToImport);
+}
